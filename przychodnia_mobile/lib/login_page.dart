@@ -6,49 +6,78 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  String _password;
-  String _email;
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  final String correctUsername = 'Doctor';
+  final String correctPassword = 'Qwerty1234!';
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  void login() {
+    if (usernameController.text == correctUsername &&
+        passwordController.text == correctPassword) {
+      print('validated user');
+      Navigator.pushReplacementNamed(context, '/appointments');
+    } else {
+      print('non valid user');
+      usernameController.clear();
+      passwordController.clear();
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            content: Text('Invalid username or password'),
+          );
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Login Page Flutter Firebase"),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              SizedBox(height: 20.0),
-              Text(
-                'Login Information',
-                style: TextStyle(fontSize: 20),
-              ),
-              SizedBox(height: 20.0),
-              TextFormField(
-                  onSaved: (value) => _email = value,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(labelText: "Email Address")),
-              TextFormField(
-                  onSaved: (value) => _password = value,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: "Password")),
-              SizedBox(height: 20.0),
-              RaisedButton(
-                  child: Text("LOGIN"),
-                  onPressed: () {
-                    final form = _formKey.currentState;
-                    form.save();
-
-                    // Validate will return true if is valid, or false if invalid.
-                    if (form.validate()) {
-                      print("$_email $_password");
-                    }
-                  }),
-            ],
+      backgroundColor: Colors.grey,
+      body: Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Card(
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 20.0),
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 10.0),
+                  child: TextField(
+                    decoration: InputDecoration(labelText: 'Username'),
+                    controller: usernameController,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 20.0),
+                  child: TextField(
+                    decoration: InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                    controller: passwordController,
+                  ),
+                ),
+                Center(
+                  child: FlatButton(
+                    child: Text('Login'),
+                    color: Colors.blue,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      login();
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
