@@ -8,28 +8,90 @@ class AppointmentsPage extends StatefulWidget {
 }
 
 class _AppointmentsPageState extends State<AppointmentsPage> {
-  List<Appointment> appointments = [
+  List<Appointment> _appointments = [
     Appointment(
       id: 1,
-      appointmentDate: DateTime.now(),
+      appointmentDate: DateTime.now().subtract(Duration(days: 1, hours: 2)),
       patient: Patient(
         id: 1,
         name: 'Adam',
-        surname: 'Savage',
+        surname: 'Past',
         identityNumber: '123123123123',
       ),
       isCancelled: false,
+      isFinished: true,
     ),
     Appointment(
       id: 1,
-      appointmentDate: DateTime.now(),
+      appointmentDate: DateTime.now().subtract(Duration(days: 1, hours: 1)),
       patient: Patient(
         id: 1,
         name: 'Adam',
-        surname: 'Savage',
+        surname: 'Past',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().subtract(Duration(days: 1, hours: 3)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Past',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: true,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().subtract(Duration(days: 1)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Past',
         identityNumber: '123123123123',
       ),
       isCancelled: true,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(hours: 2)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Current',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(hours: 1)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Current',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(hours: 3)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Current',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: true,
     ),
     Appointment(
       id: 1,
@@ -37,38 +99,155 @@ class _AppointmentsPageState extends State<AppointmentsPage> {
       patient: Patient(
         id: 1,
         name: 'Adam',
-        surname: 'Savage',
+        surname: 'Current',
         identityNumber: '123123123123',
       ),
       isCancelled: false,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(days: 1, hours: 3)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Future',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: true,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(days: 1, hours: 1)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Future',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(days: 1, hours: 2)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Future',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: false,
+    ),
+    Appointment(
+      id: 1,
+      appointmentDate: DateTime.now().add(Duration(days: 1)),
+      patient: Patient(
+        id: 1,
+        name: 'Adam',
+        surname: 'Future',
+        identityNumber: '123123123123',
+      ),
+      isCancelled: false,
+      isFinished: false,
     ),
   ];
 
-  List<Widget> getAppoitmentTiles() {
+  Icon getAppoitmentStatus(Appointment appointment) {
+    if (appointment.isCancelled) {
+      return Icon(
+        Icons.cancel,
+        color: Colors.red,
+      );
+    } else if (appointment.isFinished) {
+      return Icon(
+        Icons.check_box,
+        color: Colors.green,
+      );
+    } else if (!appointment.isFinished &&
+        !appointment.isCancelled &&
+        appointment.wasYesterday()) {
+      return Icon(
+        Icons.timer_off,
+        color: Colors.red,
+      );
+    } else {
+      return Icon(Icons.access_time);
+    }
+  }
+
+  List<Widget> mapToListTile(List<Appointment> appointments) {
     return appointments
         .map((appointment) => ListTile(
-              leading: Icon(Icons.access_time),
-              title: Text(
-                  '${appointment.patient.name} ${appointment.patient.surname}'),
-              trailing: Text('${appointment.appointmentDate.toString()}'),
-              enabled: !appointment.isCancelled,
+              leading: getAppoitmentStatus(appointment),
+              title: Text(appointment.patient.fullName()),
+              trailing: Text(appointment.prettyAppointmentDate()),
               subtitle: Text(appointment.patient.identityNumber),
             ))
         .toList();
   }
 
+  List<Widget> getYesterdaysAppoitments() {
+    return mapToListTile(_appointments
+        .where((appointment) => appointment.wasYesterday())
+        .toList());
+  }
+
+  List<Widget> getTodaysAppoitments() {
+    return mapToListTile(
+        _appointments.where((appointment) => appointment.isToday()).toList());
+  }
+
+  List<Widget> getTomorrowsAppoitments() {
+    return mapToListTile(_appointments
+        .where((appointment) => appointment.isTomorrow())
+        .toList());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Your appointments'),
-      ),
-      backgroundColor: Colors.white,
-      body: ListView(
-        children: ListTile.divideTiles(
-          context: context,
-          tiles: getAppoitmentTiles(),
-        ).toList(),
+    _appointments
+        .sort((a, b) => a.appointmentDate.compareTo(b.appointmentDate));
+
+    return DefaultTabController(
+      length: 3,
+      initialIndex: 1,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Your appointments'),
+          bottom: TabBar(
+            tabs: <Widget>[
+              Tab(text: 'Yesterday'),
+              Tab(text: 'Today'),
+              Tab(text: 'Tomorrow'),
+            ],
+          ),
+        ),
+        backgroundColor: Colors.white,
+        body: TabBarView(
+          children: <Widget>[
+            ListView(
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: getYesterdaysAppoitments(),
+              ).toList(),
+            ),
+            ListView(
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: getTodaysAppoitments(),
+              ).toList(),
+            ),
+            ListView(
+              children: ListTile.divideTiles(
+                context: context,
+                tiles: getTomorrowsAppoitments(),
+              ).toList(),
+            ),
+          ],
+        ),
       ),
     );
   }

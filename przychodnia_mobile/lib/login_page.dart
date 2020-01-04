@@ -22,12 +22,11 @@ class _LoginPageState extends State<LoginPage> {
   void login() {
     if (usernameController.text == correctUsername &&
         passwordController.text == correctPassword) {
-      print('validated user');
       Navigator.pushReplacementNamed(context, '/appointments');
     } else {
-      print('non valid user');
       usernameController.clear();
       passwordController.clear();
+      
       showDialog(
         context: context,
         builder: (context) {

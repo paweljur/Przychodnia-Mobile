@@ -5,4 +5,8 @@ class Patient {
   String identityNumber;
 
   Patient({this.id, this.identityNumber, this.name, this.surname});
+
+  String fullName() {
+    return '$name $surname';
+  }
 }
