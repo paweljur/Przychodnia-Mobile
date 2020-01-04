@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
         '/': (BuildContext context) => LoginPage(),
         '/appointments': (BuildContext context) => AppointmentsPage(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
