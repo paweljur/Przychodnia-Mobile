@@ -16,7 +16,9 @@ class Appointment {
 
   bool wasYesterday() {
     DateTime now = DateTime.now();
-    return appointmentDate.isBefore(DateTime(now.year, now.month, now.day));
+    return appointmentDate
+            .isAfter(DateTime(now.year, now.month, now.day - 1)) &&
+        appointmentDate.isBefore(DateTime(now.year, now.month, now.day));
   }
 
   bool isToday() {
@@ -27,7 +29,9 @@ class Appointment {
 
   bool isTomorrow() {
     DateTime now = DateTime.now();
-    return appointmentDate.isAfter(DateTime(now.year, now.month, now.day + 1));
+    return appointmentDate
+            .isAfter(DateTime(now.year, now.month, now.day + 1)) &&
+        appointmentDate.isBefore(DateTime(now.year, now.month, now.day + 2));
   }
 
   String prettyAppointmentDate() {
